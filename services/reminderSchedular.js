@@ -1,5 +1,8 @@
 const Reminder = require('../model/reminderModel');
 const sendReminderEmail = require('./notification');
+const nodemailer = require('nodemailer');
+
+require('dotenv').config();
 
 const checkReminders = async () => {
     try {

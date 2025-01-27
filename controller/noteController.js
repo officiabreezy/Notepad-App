@@ -1,4 +1,9 @@
 const Note = require('../model/noteModel');
+const nodemailer = require('nodemailer');
+const  express = require('express');
+require('dotenv').config();
+
+expiresIn = new Date(Date.now() + 600000);
 
 const createNote = async (req, res) => {
     const { title, content, categories, tags } = req.body;
@@ -112,4 +117,61 @@ const setReminder = async (req, res) => {
         }   
 };
 
-module.exports = {createNote, updateNote, deleteNote, getAllNotes, searchNote, setReminder};
+const shareNoteViaEmail = async (req, res) => {
+    const  {email, message} = req.body;
+    const {noteId} = req.params;
+
+    try {
+        const note = await Note.findById(noteId);
+        if(!note){
+            return res.status(404).json({ message: 'Note not found' });
+        }
+            const transporter = nodemailer.createTransport({
+                service: "gmail",
+                auth: {
+                    user: process.env.user_email,
+                    pass: process.env.user_password,
+                }
+            });
+          
+            await transporter.sendMail({
+                from: process.env.user_email,
+                to: email,
+                subject: `Shared Note: ${note.title}`,
+                text: `${message}\n\nView Note: ${process.env.BASE_URL}/notes/${noteId}`,
+            });
+            res.status(200).json({ message: 'Note shared successfully via email!' });
+
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Error sharing note via email.' });
+    };	
+}
+
+const sharedLink = async (req, res) => {
+    const { noteId } = req.params;
+    const { permission, expiresIn } = req.body;
+
+    try {
+       const note = await Note.findById(noteId);
+       if(!note) {
+        return res.status(404).json({ message: 'Note not found' });
+       }
+
+       const expiration = permission === 'public' ? null: expiresIn;
+
+       const link = `${process.env.BASE_URL}/shared-note/${noteId}/${permission}/${expiresIn || "no-expiry"}`;
+       
+
+       note.sharedLinks.push({link, expiresIn: expiration, permission });
+       await note.save();
+
+
+       res.status(200).json({ message: 'Shared note link generated', link });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message:"Error generating shareable link" });
+    }
+};
+
+module.exports = {createNote, updateNote, deleteNote, getAllNotes, searchNote, setReminder, shareNoteViaEmail, sharedLink};

@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Collaborative Notes</title>
+    <script src="https://cdn.socket.io/4.5.1/socket.io.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+        textarea {
+            width: 100%;
+            height: 200px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Collaborative Note</h1>
+    <textarea id ="noteEditor" placeholder="Start typing your collaborative note..."></textarea>
+
+    <script>
+        const socket = io('http://localhost:1020');
+
+        // Example note ID
+        const noteId = 'example-note-id';
+
+        // Join the note room
+        socket.emit('join-note', { noteId });
+
+        // Select the note editor
+        const noteEditor = document.getElementById('noteEditor');
+
+        // Listen for note edits from other users
+        socket.on('note-edited', ({content}) => {
+            console.log(`note edited......`);
+            noteEditor.value = content; // Update the note content
+        });
+
+        noteEditor.addEventListener('input', () => {
+            const content = noteEditor.value;
+            socket.emit('edit-note', { noteId, content });
+        });
+
+        
+        // Notify when a user joins
+        socket.on('user-joined', ({ userId }) => {
+            console.log(`User ${userId} joined the note.`);
+        });
+
+        // Notify when a user disconnects
+        socket.on('user-disconnected', ({ userId }) => {
+            console.log(`User ${userId} disconnected.`);
+        });
+    </script>
+</body>
+</html>

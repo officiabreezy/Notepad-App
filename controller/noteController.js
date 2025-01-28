@@ -174,4 +174,22 @@ const sharedLink = async (req, res) => {
     }
 };
 
-module.exports = {createNote, updateNote, deleteNote, getAllNotes, searchNote, setReminder, shareNoteViaEmail, sharedLink};
+const getNoteviaLink = async (req, res) => {
+    const {token} = req.params.token;
+    console.log( req.url, req.params);
+
+    try {
+      const note = await Note.findOne({ sharedLink: token}); 
+    if(!note){
+        console.log("Note not found in DB for token: ",token);
+        return res.status(404).json({ message: 'Invalid or expired link' });
+    }
+
+    return res.status(200).json({ content: note.content, permission : note.permission });
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json({ message:"Error retrieving shared note" });
+    }
+};
+
+module.exports = {createNote, updateNote, deleteNote, getAllNotes, searchNote, setReminder, shareNoteViaEmail, sharedLink, getNoteviaLink};

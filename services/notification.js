@@ -26,4 +26,4 @@ try {
 };
 
 
-module.exports = {sendReminderEmail};
+module.exports = sendReminderEmail;

@@ -23,10 +23,10 @@ const checkReminders = async () => {
             await reminder.save();
         }
         
-        console.log('Reminders checked and sent');
+        // console.log('Reminders checked and sent');
     } catch (error) {
         console.error('error in reminder scheduler:', error.message);
-        // res.status(500).json({message:'Error in reminder scheduler'});
+        res.status(500).json({message:'Error in reminder scheduler'});
     }
 };
 

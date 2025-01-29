@@ -11,7 +11,7 @@ const checkPermission = (action) => {
         
         const userId = req.user._id.toString();
         const isOwner = note.owner.toString() === userId;
-        const collaborators = note.collaborators.find(c => c.user.toString() === userId);
+        const collaborator = note.collaborators.find(c => c.user.toString() === userId);
         const role = collaborator ? collaborator.role: null;
 
         const hasPermission ={

@@ -14,7 +14,10 @@ const noteSchema = new mongoose.Schema({
     tags: { type: String, default:'[]'},
     user: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
     owner: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
-    collaborators: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
+    collaborators: [{ user: 
+        {type: mongoose.Schema.Types.ObjectId, ref: 'User'},
+        role: { type: String, enum: ['read', 'edit', 'comment'], default: 'read' },
+    }],
     comments: [commentSchema],
     sharedLinks: [{
         link: String,

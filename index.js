@@ -34,17 +34,17 @@ app.get('/', (req, res) => {
  });
 
  io.on('connection', (socket) => {
-  console.log('A user connected');
+  console.log('A user connected to the server:', socket.id);
   socket.emit('message', 'Welcome to the Socket.IO server!');
  });  
-  io.on('edit-note', (data) => {
-    console.log('Edit note event received:', data);
-    // Broadcast the event to all other connected clients
-    socket.broadcast.emit('note-updated', data);
-  });
+  // io.on('edit-note', (data) => {
+  //   console.log('Edit note event received:', data);
+  //   // Broadcast the event to all other connected clients
+  //   socket.broadcast.emit('note-updated', data);
+  // });
 
   io.on('disconnect', () => {
-      console.log('A user disconnected');
+      console.log('A user disconnected:',socket.id);
   });
 //  const io = setupSocket(server);
 

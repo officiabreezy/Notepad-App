@@ -1,6 +1,6 @@
 const setupSocket = (io) => {
-    io.on('connection', (socket) => {
-        console.log(`User connected: ${socket.id}`);
+    // io.on('connection', (socket) => {
+    //     console.log(`User connected: ${socket.id}`);
     
       socket.on('join-note', ({ noteId}) => {
         console.log(`User ${socket.id} joined note: ${noteId}`);
@@ -19,10 +19,10 @@ const setupSocket = (io) => {
     socket.broadcast.emit('noteUpdated', data);
   });
 
-      socket.on('disconnect', () => {
-        console.log(`User disconnected: ${socket.id}`);
-      });
-    });
+    //   socket.on('disconnect', () => {
+    //     console.log(`User disconnected: ${socket.id}`);
+    //  });
+    // });  
 };
 
 module.exports = setupSocket;
